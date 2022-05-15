@@ -11,16 +11,20 @@ const App = () => {
     socket.emit("send_message",{message,joinRoom})
     setMessageList((list) => [...list, message]);
   }
+  // const sendMessage= useEvent(connectedRoom => {
+  //    socket.emit("send_message",{message,joinRoom})
+  //   setMessageList((list) => [...list, message]);
+  // });
   const joinRoomHandler=()=>{
     if(joinRoom!==""){
       socket.emit("join_room",joinRoom)
     }
   }
   useEffect(() => {
-    socket.on("receive_message",(data)=>{
+    socket.on("receive_message",async(data)=>{
       // setMessageReceived(data.message);
       console.log("bro")
-      setMessageList((list) => [...list, data.message]);
+      await setMessageList((list) => [...list, data.message]);
     })
   }, [socket]);
   console.log("messageList",messageList);
