@@ -1,12 +1,15 @@
 import React,{useState,useEffect} from 'react'
 import { io } from "socket.io-client";
 const socket=io("http://localhost:3001");
+import ScrollToBottom from "react-scroll-to-bottom";
 const App = () => {
   const [message,setMesage]=useState("");
   const [messageRecieved, setMessageReceived] = useState("");
   const [joinRoom,setjoinRoom]=useState("");
+  const [messageList, setMessageList] = useState([]);
   const sendMessage=()=>{
     socket.emit("send_message",{message,joinRoom})
+    setMessageList((list) => [...list, message]);
   }
   const joinRoomHandler=()=>{
     if(joinRoom!==""){
@@ -15,9 +18,12 @@ const App = () => {
   }
   useEffect(() => {
     socket.on("receive_message",(data)=>{
-      setMessageReceived(data.message);
+      // setMessageReceived(data.message);
+      console.log("bro")
+      setMessageList((list) => [...list, data.message]);
     })
   }, [socket]);
+  console.log("messageList",messageList);
   return (
     <div className='App'>
        <input 
@@ -35,7 +41,16 @@ const App = () => {
      }}
      />
       <button onClick={sendMessage}>Send Message</button>
-      <h1>{messageRecieved}</h1>
+      {/* <h1>{messageRecieved}</h1> */}
+      <div className="message-container">
+          {messageList.map((messageContent,i) => {
+            return (
+               <div key={i}>
+                 {messageContent}
+              </div>
+            );
+          })}
+        </div>
     </div>
   )
 }
